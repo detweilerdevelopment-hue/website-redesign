@@ -27,5 +27,15 @@ await click('My tickets');assert.ok(w.document.querySelector('[role="dialog"]'))
 w.document.dispatchEvent(new w.KeyboardEvent('keydown',{key:'Escape',bubbles:true}));await settle();
 assert.equal(w.document.querySelector('[role="dialog"]'),null);
 await click('People');await click('You’re interested');assert.match(w.document.querySelector('.group-event').textContent,/Count me in/);
-assert.deepEqual(errors,[]);console.log('React flow passed: two travelers, Monaco upgrade, pricing, partial-group activity, synced app, tickets, dialog dismissal, RSVP.');
+// The presentation page must seed the same configuration used by the real builder.
+w.location.hash='/approach';await settle();
+assert.ok(w.document.querySelector('.approach-playground'));
+assert.match(w.document.querySelector('.approach-total').textContent,/6,570/);
+await click('Stay in Monaco');assert.match(w.document.querySelector('.approach-total').textContent,/14,470/);
+await click('A coast boat for Traveler 1');assert.match(w.document.querySelector('.approach-total').textContent,/14,260/);
+await click('A coast boat for Traveler 1');await click('See these plans in the app');
+assert.equal(JSON.parse(w.localStorage.getItem('guideless-trip')).travelers,2);
+assert.equal(JSON.parse(w.localStorage.getItem('guideless-trip')).stay,'monaco');
+assert.match(w.document.querySelector('.app-next-card').textContent,/scenic route/);
+assert.deepEqual(errors,[]);console.log('React flow passed: booking, traveler-specific app, tickets, RSVP, interactive presentation, and shared configuration.');
 w.close();
